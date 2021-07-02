@@ -24,6 +24,10 @@ class HistoryController: UIViewController,UITableViewDelegate,UITableViewDataSou
         activityIndicatorView.startAnimating()
     }
     
+    func EndIndicatorView() {
+        self.activityIndicatorView.stopAnimating()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -36,6 +40,10 @@ class HistoryController: UIViewController,UITableViewDelegate,UITableViewDataSou
         
         selectData { (histories) in
             self.histories = histories
+            
+            self.EndIndicatorView()
+            
+            self.table.reloadData()
         }
     }
     
@@ -82,10 +90,6 @@ class HistoryController: UIViewController,UITableViewDelegate,UITableViewDataSou
             })
             
             compeltion(histories ?? [HistoryStruct]())
-            
-            self.activityIndicatorView.stopAnimating()
-            
-            self.table.reloadData()
         }
     }
     

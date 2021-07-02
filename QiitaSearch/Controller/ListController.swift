@@ -14,7 +14,7 @@ class ListController: UIViewController,UITableViewDelegate,UITableViewDataSource
     var historyBarButtonItem = UIBarButtonItem()
     let database = Firestore.firestore()
     
-    override func viewWillAppear(_ animated: Bool) {
+    func StartIndicatorView() {
         //処理中ダイアログ
         activityIndicatorView.center = view.center
         activityIndicatorView.style = .large
@@ -24,6 +24,10 @@ class ListController: UIViewController,UITableViewDelegate,UITableViewDataSource
         activityIndicatorView.startAnimating()
     }
 
+    func EndIndicatorView() {
+        activityIndicatorView.stopAnimating()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -46,11 +50,12 @@ class ListController: UIViewController,UITableViewDelegate,UITableViewDataSource
     
         getAPIInfo(url: baseurl)
         
-        
     }
 
     // APIデータの取得
     func getAPIInfo(url: String) {
+        
+        self.StartIndicatorView()
         
         let request = AF.request(url)
         
@@ -61,10 +66,9 @@ class ListController: UIViewController,UITableViewDelegate,UITableViewDataSource
                 let articles = try decode.decode([QiitaStruct].self, from: data)
                 self.qiitaArray = articles
                 
-                self.activityIndicatorView.stopAnimating()
+                self.EndIndicatorView()
                 
                 self.table.reloadData()
-                
             } catch {
                 print("変換に失敗しました:",error)
             }
