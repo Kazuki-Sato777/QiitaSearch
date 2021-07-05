@@ -14,39 +14,40 @@ class HistoryController: UIViewController,UITableViewDelegate,UITableViewDataSou
     private let table = UITableView()
     let database = Firestore.firestore()
     
-    override func viewWillAppear(_ animated: Bool) {
-        //処理中ダイアログ
-        activityIndicatorView.center = view.center
-        activityIndicatorView.style = .large
-        activityIndicatorView.color = .purple
-        view.addSubview(activityIndicatorView)
-        
-        activityIndicatorView.startAnimating()
-    }
-    
-    func EndIndicatorView() {
-        self.activityIndicatorView.stopAnimating()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //テーブル
-        table.frame = view.frame
-        table.contentOffset = CGPoint(x: 0, y: 0)
-        view.addSubview(table)
-        table.delegate = self
-        table.dataSource = self
-        
+        //FireStoreよりデータ取得
         selectData { (histories) in
             self.histories = histories
-            
+            //アニメーション終了
             self.EndIndicatorView()
             
             self.table.reloadData()
         }
     }
     
+}
+
+//*******************************************//
+//                  viewの作成
+//*******************************************//
+extension HistoryController{
+    func SetView() {
+        //テーブル
+        table.frame = view.frame
+        table.contentOffset = CGPoint(x: 0, y: 0)
+        view.addSubview(table)
+        table.delegate = self
+        table.dataSource = self
+    }
+}
+
+
+//*******************************************//
+//                  セルイベント
+//*******************************************//
+extension HistoryController{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return histories.count
     }
@@ -67,7 +68,30 @@ class HistoryController: UIViewController,UITableViewDelegate,UITableViewDataSou
                 UIApplication.shared.open(url! as URL, options: [:], completionHandler: nil)
         }
     }
+}
+
+//*******************************************//
+//                  関数
+//*******************************************//
+extension HistoryController{
     
+    //アニメーションの開始
+    override func viewWillAppear(_ animated: Bool) {
+        //処理中ダイアログ
+        activityIndicatorView.center = view.center
+        activityIndicatorView.style = .large
+        activityIndicatorView.color = .purple
+        view.addSubview(activityIndicatorView)
+        
+        activityIndicatorView.startAnimating()
+    }
+    
+    //アニメーションの終了
+    func EndIndicatorView() {
+        self.activityIndicatorView.stopAnimating()
+    }
+    
+    //Firebaseより閲覧履歴取得
     func selectData(compeltion: @escaping ([HistoryStruct]) -> Void){
         
         database.collection("history").getDocuments{ (snapshot, err) in
@@ -75,13 +99,6 @@ class HistoryController: UIViewController,UITableViewDelegate,UITableViewDataSou
                 print("閲覧履歴の取得に失敗しました",err)
                 return
             }
-//            var histories = [HistoryStruct]()
-//
-//            snapshot?.documents.forEach({ (snapshot) in
-//                let dic = snapshot.data()
-//                let history = HistoryStruct(dic: dic)
-//                histories.append(history)
-//            })
             
             let histories = snapshot?.documents.map({ (snapshot) -> HistoryStruct in
                 let dic = snapshot.data()
@@ -92,5 +109,4 @@ class HistoryController: UIViewController,UITableViewDelegate,UITableViewDataSou
             compeltion(histories ?? [HistoryStruct]())
         }
     }
-    
 }
