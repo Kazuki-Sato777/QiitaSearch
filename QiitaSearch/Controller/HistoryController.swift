@@ -17,6 +17,9 @@ class HistoryController: UIViewController,UITableViewDelegate,UITableViewDataSou
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //Viewの作成
+        SetView()
+        
         //FireStoreよりデータ取得
         selectData { (histories) in
             self.histories = histories

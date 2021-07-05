@@ -37,6 +37,7 @@ extension ListController{
         // 検索バー
         searchbar.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 44)
         searchbar.showsCancelButton = true
+        searchbar.text = "タグ検索です。"
         searchbar.delegate = self
         
         //テーブル
